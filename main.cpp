@@ -97,7 +97,7 @@ void deleteList(ListNode<T>*& head)
 	head = nullptr;
 }
 
-int main()
+void main()
 {
 	uint16_t size = 5; //размер списка
 	ListNode<uint16_t> *head = nullptr;
@@ -121,4 +121,6 @@ int main()
 	}
 	
 	deleteList(head);
+	std::cout << "enter something to close programm..\n"; //чтобы программа в .exe не закрывалась сразу
+	std::cin >> size;
 }
