@@ -99,7 +99,10 @@ void deleteList(ListNode<T>*& head)
 
 void main()
 {
-	uint16_t size = 5; //размер списка
+	std::cout << "size: ";
+	uint16_t size = 4; //размер списка
+	std::cin >> size;
+
 	ListNode<uint16_t> *head = nullptr;
 
 	for (uint16_t i = 1; i <= size; i++)
