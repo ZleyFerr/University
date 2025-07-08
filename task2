@@ -1,0 +1,119 @@
+#include <iostream>
+
+template<typename T>
+struct ListNode
+{
+	T val;
+	ListNode* next;
+};
+
+template<typename T>
+void appendList(ListNode<T>*& head, const T& val)
+{
+	ListNode<T>* newNode = new ListNode<T>;
+	newNode->val = val;
+	newNode->next = nullptr;
+
+	if (head == nullptr)
+	{
+		head = newNode;
+	}
+	else
+	{
+		ListNode<T>* current = head;
+
+		while (current->next != nullptr)
+		{
+			current = current->next;
+		}
+		current->next = newNode;
+	}
+}
+
+template <typename T>
+void printList(ListNode<T>*& head)
+{
+	ListNode<T>* current = head;
+	while (current != nullptr)
+	{
+		std::cout << current->val << " ";
+		current = current->next;
+	}
+}
+
+template<typename T>
+void reorderList(ListNode<T>* head)
+{
+	unsigned int counter = 0;
+	ListNode<T>* nElement = head;
+	ListNode<T>* firstElement = head;
+	ListNode<T>* ptr_preLast = head;
+	ListNode<T>* ptr_10last = head;
+
+	if (head != nullptr)
+	{
+
+		//получение 10 с конца элемента
+		while (head->next != nullptr)
+		{
+			counter++;
+			if (counter > 9)
+				ptr_10last = ptr_10last->next;
+			head = head->next;
+		}
+	}
+	else
+	{
+		std::cerr << "Node is empty.\n";
+		return;
+	}
+
+
+	std::cout << "10 s konca: " << ptr_10last->val << "\n";
+
+}
+
+template <typename T>
+void deleteList(ListNode<T>*& head)
+{
+	ListNode<T>* current = head;
+	ListNode<T>* next;
+
+	while (current != nullptr)
+	{
+		next = current->next;
+		delete current;
+		current = next;
+	}
+	head = nullptr;
+}
+
+void main()
+{
+	std::cout << "size: ";
+	uint16_t size = 4; //размер списка
+	std::cin >> size;
+
+	ListNode<uint16_t>* head = nullptr;
+
+	for (uint16_t i = 1; i <= size; i++)
+	{
+		appendList<uint16_t>(head, uint16_t(i));
+	}
+
+	std::cout << "head = [ ";
+	printList(head);
+	std::cout << "]\n";
+
+	reorderList(head);
+	if (size > 2)
+	{
+		std::cout << "reodered list = [ ";
+		printList(head);
+		std::cout << "]\n";
+	}
+
+	deleteList(head);
+	std::cout << "enter something to close programm..\n"; //чтобы программа в .exe не закрывалась сразу
+	std::cin >> size;
+}
