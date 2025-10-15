@@ -1,0 +1,407 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include <string>
+
+//Задание №1.Передача в функцию параметров стандартных типов. Написать функцию вывода таблицы значения функции из лабораторной работы №2 для аргументов, изменяющихся в заданных пределах с заданным шагом, с точностью ε.
+//Значение аргумента и точность передать в качестве параметров функции.
+//Задание №2.Передача в функцию указателя на функцию.Пользуясь функцией из задания №1, объявить указатель на нее и передать его как параметр некоторой другой функции.
+//Задание №3.Передача одномерных массивов в функцию.Пользуясь массивом, определенным в пункте А лабораторной работы №3, определить функции, реализующие подпункты данного пункта.
+//Задание №4.Передача строк в функцию.Определить функцию, считывающую строку символов(длина строки не более 100 символов), подсчитать, сколько в каждой строке числовых символов.
+//Задание №5.Передача многомерных массивов в функцию.Пользуясь массивом, определенным в пункте В лабораторной работы №3, определить функции, реализующие подпункты данного пункта.
+//Задание №6.Передача структур в функцию.Определить функцию, получающую в качестве аргумента структуру и выводящую поля данной структуры.
+//Задание №7.Рекурсивные функции.Написать функцию упорядочивания массива по возрастанию, используя рекурсию.
+//Задание №8.Перегружаемые функции.Пользуясь заданием №3 данной работы, перегрузить функцию для массивов типов int и double.
+//Задание №9.Шаблоны функции.Определить шаблон функции, реализующий подпункт 1 пункта В(или пункт В) лабораторной работы №3 для произвольных арифметических типов.Вызвать шаблон как обычную функцию и со спецификатором шаблона.
+
+long double factorial(int n)
+{
+  if (n == 0)
+  {
+    return 1.0;
+  }
+  else
+  {
+    long double result = 1.0;
+    for (int i = 1; i <= n; ++i)
+    {
+      result *= i;
+    }
+    return result;
+  }
+}
+void printTable(double func, double eps)
+{
+  std::cout << "| " << std::setw(9) << func << " |" << eps << " |" << std::endl;
+}
+void task_1()
+{
+  setlocale(LC_ALL, "Ru");
+  double x_start, x_end, dx, epsilon;
+
+  std::cout << "start x: ";
+  std::cin >> x_start;
+
+  std::cout << "end x: ";
+  std::cin >> x_end;
+
+  std::cout << "шаг dx: ";
+  std::cin >> dx;
+
+  std::cout << "точность epsilon: ";
+  std::cin >> epsilon;
+
+  std::cout << std::setprecision(8) << std::fixed;
+
+  std::cout << "----------------------------------------------------" << std::endl;
+  std::cout << "| sin(x)/x   | Точность  |" << std::endl;
+  std::cout << "----------------------------------------------------" << std::endl;
+
+
+
+  for (double x = x_start; x <= x_end; x += dx)
+  {
+    double sum = 1.0;
+    int n = 1;
+    double elem_now = 1.0;
+    int num_elements = 1;
+    while (abs(elem_now) > epsilon)
+    {
+      elem_now = pow(-1, n) * pow(x, 2 * n) / factorial(2 * n + 1);
+      sum += elem_now;
+      n++;
+      num_elements++;
+    }
+    printTable(sum, epsilon);
+  }
+  std::cout << "----------------------------------------------------" << std::endl;
+}
+void test_func(void(*FNC)(double, double), double a, double b)
+{
+  FNC(a, b);
+}
+void task_2()
+{
+  double sum = 123.0, epsilon = 0.0100;
+  void (*func_ptr)(double, double) = printTable;
+  test_func(func_ptr, sum, epsilon);
+  std::cout << "----------------------------------------------------" << std::endl;
+}
+void find_min_abs_index(double* arr, int n)
+{
+  int index = 0;
+
+  for (int i = 0; i < n; i++)
+  {
+    if (abs(arr[i]) < abs(arr[index])) index = i;
+  }
+  std::cout << "nomer min abs: " << index << "\n";
+}
+void find_sum(double* arr, int n)
+{
+  int first_otric_index = 0;
+  double sum = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+    if (arr[i] < 0)
+    {
+      first_otric_index = i;
+      break;
+    }
+  }
+
+  for (int i = first_otric_index; i < n; i++)
+  {
+    sum += abs(arr[i]);
+  }
+  std::cout << "sum of modules elements after first otric: " << sum << "\n";
+}
+void sokr_arr(double* arr, int n)
+{
+  int a, b;
+  std::cout << " a >> b: ";
+  std::cin >> a >> b;
+  for (int i = a; i <= b; i++)
+  {
+    arr[i] = 0;
+  }
+  for (int i = 0; i < n; i++) std::cout << arr[i] << " ";
+  std::cout << "\n";
+}
+void task_a()
+{
+  int n = 0;
+  std::cout << "nums of elements: ";
+  std::cin >> n;
+  double* arr = new double[n];
+  srand(time(NULL));
+
+  for (int i = 0; i < n; i++)
+  {
+    double rnd = rand() % 1000 - double(i) * 1.00724;
+    arr[i] = rnd;
+  }
+  find_min_abs_index(arr, n);
+}
+void task_3()
+{
+  task_a();
+  std::cout << "----------------------------------------------------" << std::endl;
+}
+void cifriCalculate(std::string text)
+{
+  int counter = 0;
+  std::string numbers = "0123456789";
+  for (char c : text)
+  {
+    for (char c1 : numbers)
+    {
+      if (c == c1) counter++;
+    }
+  }
+  std::cout << counter << " cifr\n";
+}
+void task_4()
+{
+  std::string text = "tghrtugh5tiuhg45tg458ty45g45g45g54t85t12312312rgf45rg45g45g54g54g4g45g4grtgrtgg";
+  cifriCalculate(text);
+  std::cout << "----------------------------------------------------" << std::endl;
+}
+int** matrix_create(int x, int y)
+{
+  int** matrix = new int* [x];
+  for (int i = 0; i < x; i++)
+  {
+    matrix[i] = new int[y];
+  }
+  return matrix;
+}
+void matrix_delete(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    delete[] matrix[i];
+  }
+  delete[] matrix;
+}
+void matrix_fill(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      matrix[i][j] = (rand() % 100) + 50;
+    }
+  }
+}
+void matrix_print(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      std::cout << matrix[i][j] << " ";
+    }
+    std::cout << "\n";
+  }
+}
+void matrix_to_triangle(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      if (i != j) matrix[i][j] = 0;
+    }
+  }
+  int value = 0;
+  matrix_print(matrix, x, y);
+  std::cout << "value: ";
+  std::cin >> value;
+  int amount = 0;
+
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      if (i == j)
+      {
+        if (matrix[i][j] < value) amount++;
+      }
+    }
+  }
+  std::cout << "amount of strings with value < " << value << ": " << amount << "\n";
+}
+void task_b()
+{
+  std::cout << "\n---------------------------------\n";
+  int n, m;
+  std::cout << "n >> m: ";
+  std::cin >> n >> m;
+  int** matrix = matrix_create(n, m);
+  matrix_fill(matrix, n, m);
+  matrix_to_triangle(matrix, n, m);
+  matrix_delete(matrix, n, m);
+}
+void task_5()
+{
+  task_b();
+  std::cout << "\n---------------------------------\n";
+}
+struct Human { int age = 0; int height = 0; };
+void structPrint(Human human)
+{
+  std::cout << "age: " << human.age << "\n" << "height: " << human.height << "\n";
+}
+void task_6()
+{
+  Human human;
+  human.age = 15;
+  human.height = 155;
+  structPrint(human);
+  std::cout << "\n---------------------------------\n";
+}
+void arraySorter(int* arr, int size)
+{
+  for (int i = 0; i < size-1; i++)
+  {
+    if (arr[i] > arr[i + 1])
+    {
+      int temp = arr[i];
+      arr[i] = arr[i + 1];
+      arr[i+1] = temp;
+    }
+  }
+  bool sorted = false;
+  for (int i = 0; i < size - 1; i++)
+  {
+    if (arr[i] > arr[i + 1]) sorted = true;
+  }
+  if (!sorted)
+    return;
+  else
+    arraySorter(arr, size - 1);
+}
+void task_7()
+{
+  int size = 25;
+  int* arr = new int[size];
+  for (int i = 0; i < size; i++)
+  {
+    if (i % 2 == 0) arr[i] = i;
+    else arr[i] = -i;
+  }
+  for (int i = 0; i < size; i++)
+  {
+    std::cout << arr[i] << " ";
+  }
+  std::cout << "\n--------------NEW:--------------\n";
+  arraySorter(arr, size);
+  for (int i = 0; i < size; i++)
+  {
+    std::cout << arr[i] << " ";
+  }
+  std::cout << "\n---------------------------------\n";
+}
+void find_min_abs_index(int* arr, int n)
+{
+  int index = 0;
+
+  for (int i = 0; i < n; i++)
+  {
+    if (abs(arr[i]) < abs(arr[index])) index = i;
+  }
+  std::cout << "nomer min abs: " << index << "\n";
+}
+void find_sum(int* arr, int n)
+{
+  int first_otric_index = 0;
+  double sum = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+    if (arr[i] < 0)
+    {
+      first_otric_index = i;
+      break;
+    }
+  }
+
+  for (int i = first_otric_index; i < n; i++)
+  {
+    sum += abs(arr[i]);
+  }
+  std::cout << "sum of modules elements after first otric: " << sum << "\n";
+}
+void sokr_arr(int* arr, int n)
+{
+  int a, b;
+  std::cout << " a >> b: ";
+  std::cin >> a >> b;
+  for (int i = a; i <= b; i++)
+  {
+    arr[i] = 0;
+  }
+  for (int i = 0; i < n; i++) std::cout << arr[i] << " ";
+  std::cout << "\n";
+}
+void task_8()
+{
+  int n = 0;
+  std::cout << "nums of elements: ";
+  std::cin >> n;
+  int* arr = new int[n];
+  srand(time(NULL));
+
+  for (int i = 0; i < n; i++)
+  {
+    int rnd = rand() % 1000;
+    arr[i] = rnd;
+  }
+  find_min_abs_index(arr, n);
+}
+template <typename T, typename Y>
+void find_sum_9(T* arr, Y n)
+{
+  int first_otric_index = 0;
+  T sum = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+    if (arr[i] < 0)
+    {
+      first_otric_index = i;
+      break;
+    }
+  }
+
+  for (int i = first_otric_index; i < n; i++)
+  {
+    sum += abs(arr[i]);
+  }
+  std::cout << "sum of modules elements after first otric: " << sum << "\n";
+}
+void task_9()
+{
+  int n = 10;
+  double* arr = new double[n];
+  srand(time(NULL));
+
+  for (int i = 0; i < n; i++)
+  {
+    double rnd = rand() % 1000 - double(i) * 1.00724;
+    arr[i] = rnd;
+  }
+
+  find_sum_9(arr, n);
+}
+void main()
+{
+  task_1();
+  task_2();
+  task_3();
+  task_4();
+  task_5();
+  task_6();
+  task_7();
+  task_8();
+  task_9();
+}
