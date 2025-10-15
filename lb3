@@ -1,0 +1,385 @@
+#include <iostream>
+#include <chrono>
+#include <ctime>
+
+void task_1()
+{
+  //Задание №1. Пользуясь результатами, полученными в первой лабораторной работе, объявить переменные стандартных типов. Объявить указатели на них, получить значения адресов объектов стандартного типа и значений этих объектов.
+  char a = 'j';
+  int b = 1;
+  float c = 2.0;
+  double d = 3.0;
+  bool e = true;
+
+  char* a_ptr = &a;
+  int* b_ptr = &b;
+  float* c_ptr = &c;
+  double* d_ptr = &d;
+  bool* e_ptr = &e;
+
+  std::cout << static_cast<void*>(a_ptr) << " " << *a_ptr << "\n";
+  std::cout << b_ptr << " " << *b_ptr << "\n";
+  std::cout << c_ptr << " " << *c_ptr << "\n";
+  std::cout << d_ptr << " " << *d_ptr << "\n";
+  std::cout << e_ptr << " " << *e_ptr << "\n";
+  std::cout << "---------------------------\n";
+}
+
+void task_2()
+{
+  //Задание  №2.Объявить переменные типа перечисление и указатели на объекты типа перечисления.Показать пример работы с этими переменными через указатели.
+  enum months
+  {
+    january,
+    february,
+    march,
+    april
+  };
+
+  months jan = january;
+  months* enum_ptr = &jan;
+  months* enum_ptr2 = nullptr;
+  std::cout << enum_ptr << " " << *enum_ptr << "\n";
+  enum_ptr2 = enum_ptr;
+  std::cout << enum_ptr2 << " " << *enum_ptr2 << "\n";
+  std::cout << "---------------------------\n";
+}
+
+void task_3()
+{
+  //Пользуясь структурой, объявленной в работе №1, объявить указатель на нее. 
+  // Через указатель вывести на экран монитора значения всех полей структуры.
+  struct types
+  {
+    char char1 = '1';
+    int int1 = 1;
+    bool bool1 = true;
+    float float1 = 1.0;
+    double double1 = 1.0;
+  };
+
+  types types1;
+  types* types_ptr = &types1;
+  std::cout << types_ptr->bool1 << " " << types_ptr->char1 << " " << types_ptr->bool1 << " " << types_ptr->float1 << " " << types_ptr->double1 << "\n";
+  std::cout << "---------------------------\n";
+}
+
+void task_4()
+{
+ // Задание №4.Исследовать, возможны ли преобразования переменных стандартных типов через указатели на них.
+    //С указателями очень часто упоминают о массивах, так как имя массива в С++ понимается как указатель на его первый элемент.
+    // Обращение к элементам массива через указатели сокращает время обработки массивов и предпочтительнее с точки зрения семантики программы.
+  //Пользуясь системным таймером можно приблизительно оценить время обработки массива 
+  // с помощью операции индексирования и сопоставить со временем обработки с помощью указателей.
+
+  int int_var = 5;
+  int* int_ptr = &int_var;
+
+  float float_var = static_cast<float>(*int_ptr);
+  float_var += 2.404;
+  std::cout << float_var << " " << int_var << "\n";
+
+  int SIZE = 5000000000;
+  int* array1 = new int[SIZE];
+  int* array2 = new int[SIZE];
+  for (int i = 0; i < SIZE; i++)
+  {
+    array1[i] = i;
+    array2[i] = i;
+  }
+
+  auto start1 = std::chrono::high_resolution_clock::now();
+  for (int i = 0; i < SIZE; i++)
+  {
+    array1[i] = array1[i] + 100;
+  }
+  auto end1 = std::chrono::high_resolution_clock::now();
+
+  int* start = array2;
+  int* end = array2 + SIZE;
+
+  auto start2 = std::chrono::high_resolution_clock::now();
+  for (; start < end; start++)
+  {
+    *start = *start + 100;
+  }
+  auto end2 = std::chrono::high_resolution_clock::now();
+
+  auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);
+  auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(end2 - start2);
+
+  setlocale(LC_ALL, "Ru");
+  std::cout << "Время обработки с индексацией: " << duration1.count() << " микросекунд\n";
+  std::cout << "Время обработки с указателями: " << duration2.count() << " микросекунд\n";
+  std::cout << "Разница: " << (duration1.count() - duration2.count()) << " микросекунд\n";
+  std::cout << "---------------------------\n";
+}
+
+void task_5()
+{
+  //Задание №5. Используя одномерный массив, описанный в лабораторной работе №3, организовать его обработку, пользуясь указателями.
+    int n = 0;
+    std::cout << "nums of elements: ";
+    std::cin >> n;
+    double* arr = new double[n];
+    srand(time(NULL));
+
+    double* start = arr;
+    double* end = arr + n;
+    for (; arr < end; arr++)
+    {
+      double rnd = rand()%500 + 5.42;
+      *arr = rnd;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+      std::cout << *start << " ";
+      start++;
+    }
+  std::cout << "\n---------------------------\n";
+}
+
+int** matrix_create(int x, int y)
+{
+  int** matrix = new int* [x];
+  for (int i = 0; i < x; i++)
+  {
+    matrix[i] = new int[y];
+  }
+  return matrix;
+}
+
+void matrix_delete(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    delete[] matrix[i];
+  }
+  delete[] matrix;
+}
+
+void matrix_fill(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      matrix[i][j] = (rand() % 100) + 50;
+    }
+  }
+}
+
+void matrix_print(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      std::cout << matrix[i][j] << " ";
+    }
+    std::cout << "\n";
+  }
+}
+
+void matrix_to_triangle(int** matrix, int x, int y)
+{
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      if (i != j) matrix[i][j] = 0;
+    }
+  }
+  int value = 0;
+  matrix_print(matrix, x, y);
+  std::cout << "value: ";
+  std::cin >> value;
+  int amount = 0;
+
+  for (int i = 0; i < x; i++)
+  {
+    for (int j = 0; j < y; j++)
+    {
+      if (i == j)
+      {
+        if (matrix[i][j] < value) amount++;
+      }
+    }
+  }
+  std::cout << "amount of strings with value < " << value << ": " << amount << "\n";
+}
+
+void task_6()
+{
+ /* Задание №6.Выполнить задание лабораторной работы №3 для многомерного массива, объявив его в динамической области памяти, используя операции new и delete.
+    Передача массивов в качестве параметров функции осуществляется только через указатели.
+    Общий формат выглядит следующим образом :
+    тип_результата имя_функции(тип_массива имя_массива[размерность]); или
+    тип_результата имя_функции(тип_массива имя_массива[], const int размерность); или
+    тип_результата имя_функции(тип_массива * имя_массива, const int размерность);*/ 
+  int n, m;
+  std::cout << "n >> m: ";
+  std::cin >> n >> m;
+  int** matrix = matrix_create(n, m);
+  matrix_fill(matrix, n, m);
+  matrix_to_triangle(matrix, n, m);
+  matrix_delete(matrix, n, m);
+  std::cout << "---------------------------------\n";
+}
+
+void find_min_abs_index(double* arr, int n)
+{
+  int index = 0;
+
+  for (int i = 0; i < n; i++)
+  {
+    if (abs(arr[i]) < abs(arr[index])) index = i;
+  }
+  std::cout << "nomer min abs: " << index << "\n";
+}
+
+void find_sum(double* arr, int n)
+{
+  int first_otric_index = 0;
+  double sum = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+    if (arr[i] < 0)
+    {
+      first_otric_index = i;
+      break;
+    }
+  }
+
+  for (int i = first_otric_index; i < n; i++)
+  {
+    sum += abs(arr[i]);
+  }
+  std::cout << "sum of modules elements after first otric: " << sum << "\n";
+}
+
+void sokr_arr(double* arr, int n)
+{
+  int a, b;
+  std::cout << " a >> b: ";
+  std::cin >> a >> b;
+  for (int i = a; i <= b; i++)
+  {
+    arr[i] = 0;
+  }
+  for (int i = 0; i < n; i++) std::cout << arr[i] << " ";
+  std::cout << "\n";
+}
+void task_7()
+{
+  //Задание №7. Для пункта А) лабораторной работы №3 выполнить подпункт 1, передав одномерный массив как параметр функции.
+  //  Выполнить обработку массива внутри функции согласно заданию.
+  int n = 0;
+  std::cout << "nums of elements: ";
+  std::cin >> n;
+  double* arr = new double[n];
+  srand(time(NULL));
+
+  for (int i = 0; i < n; i++)
+  {
+    double rnd = rand() % 1000 - double(i) * 1.00724;
+    arr[i] = rnd;
+  }
+  find_min_abs_index(arr, n);
+  find_sum(arr, n);
+  sokr_arr(arr, n);
+  std::cout << "---------------------------------\n";
+}
+
+void find_sum_task8(double* arr, int n)
+{
+  int first_otric_index = 0;
+  double sum = 0.0;
+  for (int i = 0; i < n; i++)
+  {
+    if (arr[i] < 0)
+    {
+      first_otric_index = i;
+      break;
+    }
+  }
+
+  for (int i = first_otric_index; i < n; i++)
+  {
+    sum += abs(arr[i]);
+  }
+  std::cout << "sum of modules elements after first otric: " << sum << "\n";
+}
+
+void test_f(void(*FPTR)(double*, int), double* a, int b) 
+{
+  FPTR(a, b);
+};
+void task_8()
+{
+  //Задание №8. Определить функцию, обрабатывающую массив по пункту А) и подпункту 2,
+  // передав его в качестве параметра. 
+  // Объявить указатель на эту функцию и передать его некой другой функции, имеющей один из возможных параметров указатель на первую функцию.
+  int n = 0;
+  std::cout << "nums of elements: ";
+  std::cin >> n;
+  double* arr = new double[n];
+  srand(time(NULL));
+
+  for (int i = 0; i < n; i++)
+  {
+    double rnd = rand() % 1000 - double(i) * 1.00724;
+    arr[i] = rnd;
+  }
+  void (*f_ptr)(double*, int) = find_sum_task8;
+  test_f(f_ptr, arr, n);
+}
+
+void task_9()
+{
+  //	Задание №9. 
+  // Объявить объекты стандартных типов и указатели на них, а так же объекты тип структура,
+  // вывести значения этих объектов через указатели на них, и через указатель на тип void.
+  // Осуществить все необходимые преобразования.
+  bool Bool = 0;
+  int Int = 1;
+  float Float = 2.0;
+  double Double = 3.0;
+  char Char = '4';
+  struct Struct
+  {
+    int a = 5;
+    int b = 6;
+    int c = 7;
+  };
+  Struct struct1;
+
+  char* a_ptr = &Char;
+  int* int_ptr = &Int;
+  float* c_ptr = &Float;
+  double* d_ptr = &Double;
+  bool* e_ptr = &Bool;
+  Struct* struct_ptr = &struct1;
+  
+  std::cout << *a_ptr << " " << (char*)(void*)(a_ptr) << "\n";
+  std::cout << *int_ptr << " " << *(int*)(void*)(int_ptr) << "\n";
+  std::cout << *c_ptr << " " << *(float*)(void*)(c_ptr) << "\n";
+  std::cout << *d_ptr << " " << *(double*)(void*)(d_ptr) << "\n";
+  std::cout << *e_ptr << " " << *(bool*)(void*)(e_ptr) << "\n";
+  std::cout << struct_ptr->a << " " << ((Struct*)(void*)(struct_ptr))->a << "\n";
+
+}
+
+void main()
+{
+  task_1();
+  task_2();
+  task_3();
+  task_4();
+  task_5();
+  task_6();
+  task_7();
+  task_8();
+  task_9();
+}
